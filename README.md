@@ -1,5 +1,5 @@
 # Post Event Report
-The "Post Event Report" is a Communication Plan that once configured can be used to generate and send out a post-mortem style report once an event completes.  Some of the features are the ability to include the Properties, the ability to render something close to the original message in HTML, as well as statistics about the event itself (timestamps, duration, targeted recipients, resolved recipients, responders, and comments.
+The "Post Event Report" is a Communication Plan that once configured can be used to generate and send out a post-mortem style report once an event completes.  Some of the features are the ability to include the Properties, the ability to render something close to the original message in HTML, as well as statistics about the event itself (timestamps, duration, targeted recipients, resolved recipients, responders, and comments).
 
 <kbd>
   <img src="https://github.com/xmatters/xMatters-Labs/raw/master/media/disclaimer.png">
