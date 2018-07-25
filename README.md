@@ -1,100 +1,140 @@
-# Instructions on creating the repo
-This file is divided up into two parts, the first is instructions on creating the repo and cloning the template, the second part is the template for the `README.md` file that will serve as the home page and installation instructions for the integration. 
-
-Some examples to emulate:
-* [Logz.io](https://github.com/xmatters/xm-labs-logz.io-elk)
-* [StatusPage](https://github.com/xmatters/xm-labs-statuspage)
-
-## 1. Create the repo
-[Create the repo](https://help.github.com/articles/create-a-repo/) using your own GitHub account. Please prefix the name of the repo with `xm-labs-` and all in lower case. When you create the repo don't add a README or LICENSE; this will make sure to initialize an empty repo. 
-
-## 2. Clone the template
-*Note*: These instructions use git in the terminal. The GitHub desktop client is rather limited and likely won't save you any headaches. 
-
-Open a command line and do the following. Where `MY_NEW_REPO_NAME_HERE` is the name of your GitHub repo and `MY_NEW_REPO_URL` is the url generated when you create the new repo. 
-
-```bash
-# Clone the template repo to the local file system. 
-git clone https://github.com/xmatters/xm-labs-template.git
-# Change the directory name to avoid confusion, then cd into it
-mv xm-labs-template MY_NEW_REPO_NAME_HERE
-cd MY_NEW_REPO_NAME_HERE
-# Remove the template git history
-rm -Rf .git/
-# Initialize the new git repo
-git init
-# Point this repo to the one on GitHub
-git remote add origin https://github.com/MY_NEW_REPO_URL.git
-# Add all files in the current directory and commit to staging
-git add .
-git commit -m "initial commit"
-# Push to cloud!
-git push origin master
-```
-
-## 3. Make updates
-Then, make the updates to the `README.md` file and add any other files necessary. `README.md` files are written in GitHub-flavored markdown, see [here](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) for a quick reference. 
-
-
-## 4. Push to GitHub
-Periodically, you will want to do a `git commit` to stash the changes locally. Then, when you are ready or need to step away, do a `git push origin master` to push the local changes to github.com. 
-
-## 5. Request to add to xM Labs
-Once you are all finished, let Travis know and he will then fork it to the xMatters account and update the necessary links in the xM Labs main page. From there if you update your repo, those changes can be merged into the xMatters account repo and everything will be kept up to date!
-
-# Template below:
----
-
-# Product Name Goes Here
-A note about what the product is and what this integration/scriptlet is all about. Check out the sweet video [here](media/mysweetvideo.mov). Be sure to indicate what type of integration or enhancement you're building! (One-way or closed-loop integration? Script library? Feature update? Enhancement to an existing integration?)
+# Post Event Report
+The "Post Event Report" is a Communication Plan that once configured can be used to generate and send out a post-mortem style report once an event completes.  Some of the features are the ability to include the Properties, the ability to render something close to the original message in HTML, as well as statistics about the event itself (timestamps, duration, targeted recipients, resolved recipients, responders, and comments.
 
 <kbd>
   <img src="https://github.com/xmatters/xMatters-Labs/raw/master/media/disclaimer.png">
 </kbd>
 
 # Pre-Requisites
-* Version 453 of App XYZ
-* Account in Application ABC
 * xMatters account - If you don't have one, [get one](https://www.xmatters.com)!
+* An xMatters User with the `Rest Web Service User` Role
 
 # Files
-* [ExampleCommPlan.zip](ExampleCommPlan.zip) - This is an example comm plan to help get started. (If it doesn't make sense to have a full communication plan, then you can just use a couple javascript files like the one below.)
-* [EmailMessageTemplate.html](EmailMessageTemplate.html) - This is an example HTML template for emails and push messages. 
-* [FileA.js](FileA.js) - An example javascript file to be pasted into a Shared Library in the Integration builder. Note the comments
+* [PostEventReport.zip](PostEventReport.zip) - This is the Communications Plan that contains a Form for requesting/initiating the Report, as well as the Inbound Integrations, Outbound Integrations, and Shared Libraries that do the actual work.
 
 # How it works
-Add some info here detailing the overall architecture and how the integration works. The more information you can add, the more helpful this sections becomes. For example: An action happens in Application XYZ which triggers the thingamajig to fire a REST API call to the xMatters inbound integration on the imported communication plan. The integration script then parses out the payload and builds an event and passes that to xMatters. 
+The report primarily takes advantage of two xMatters ReST APIs that do the majority of the work.  
+The first one that is used for several purposes is the [GET /events](https://help.xmatters.com/xmapi/index.html?javascript#get-an-event) API.
+We use GET /events for the following use cases:
+
+1. Get the event details
+    `GET /events/{eventID}?embed=properties,responseOptions,messages`
+2. Get the targeted recipients
+    `GET /events/{eventId}?embed=recipients&targeted=true`
+3. Get the resolved recipients (the actually notified users) 
+    `GET /events/{eventId}?embed=recipients&targeted=false`
+
+Secondly we rely on the [GET /audits](https://help.xmatters.com/xmapi/index.html?javascript#get-event-audit-information) API.  This provides us the annotations (comments), as well as the Responses.  
+    `GET /audits?eventId={eventId}&auditType=EVENT_ANNOTATED,RESPONSE_RECEIVED`
+
+The process flow starts when the "Request Post Event Report" Form is initated/sent:  <kbd> <img src="media/RequestReportForm.png"> </kbd>  
+This Form is the only visual part of the process.  It allows you to specify the Event ID of the Event to generate the report for, and users whom you want the report sent to when it is complete.  You also have the option of including or excluding the Properties form the Event, as well as the Messages from the Event.  
+
+Upon sending this Form, the targeted recipients will recieve a confirmation notification letting them know to expect a Post Event Report in their inbox:
+  <kbd> <img src="media/ReportRequestedNotification.png"> </kbd>  
+
+Once the report request form is sent, an Outbound Integration is triggered with logic that only fires when this request becomes "ACTIVE".  At that point, it calls the Inbound Integration that represents the first of five steps (four for collecting data, and one for formatting and generating the report).  At the end of step 5, the Form called "Post Event Report" is initiated with the results and sent to the users that were identified when the "Request Post Event Report" was sent.
+
+The following three images are an example of the Post Event Report generated for the Event Id specified in the request:
+ <kbd> <img src="media/Report-1-of-3.png"> </kbd> 
+ <kbd> <img src="media/Report-2-of-3.png"> </kbd> 
+ <kbd> <img src="media/Report-3-of-3.png"> </kbd> 
+
+
+Within the Commmunication Plan are two Shared Libraries that were created to encapsulate the work done during each phase.  There is one Shared Library for requesting the report (`Post Event Client`), and another for creating the report (`Post Event Reporter`).  In theory you could install the `Post Event Client` library and it's pre-requisite endpoint and contants (documented in the `Post Event Client` Shared Library source) in any Communications Plan.
 
 # Installation
-Details of the installation go here. 
 
 ## xMatters set up
-1. Steps to create a new Shared Library or (in|out)bound integration or point them to the xMatters online help to cover specific steps; i.e., import a communication plan (link: http://help.xmatters.com/OnDemand/xmodwelcome/communicationplanbuilder/exportcommplan.htm)
-2. Add this code to some place on what page:
-   ```
-   var items = [];
-   items.push( { "stuff": "value"} );
-   console.log( 'Do stuff' );
-   ```
-
-
-## Application ABC set up
-Any specific steps for setting up the target application? The more precise you can be, the better!
-
-Images are encouraged. Adding them is as easy as:
-```
-<kbd>
-  <img src="media/cat-tax.png" width="200" height="400">
-</kbd>
-```
+### Import the Communication Plan
+First, i\mport the `Post Event Report` Comm Plan into xMatters by downloading the [PostEventReport.zip](PostEventReport.zip) file and logging into xMatters. Navigate to the Developer tab and click the `Import Plan` button. 
 
 <kbd>
-  <img src="media/cat-tax.png" width="200" height="400">
+  <img src="media/ImportPlan.png" >
 </kbd>
 
+Point to the `PostEventReport.zip` file and click Import Plan. This will create the `Post Event Report` Comm Plan.
 
-# Testing
-Be specific. What should happen to make sure this code works? What would a user expect to see? 
+### Create a REST user account
+* **First Name:** Integration
+* **Last Name:** PER
+* **User ID:** rest.per
+* **Roles:** REST Web Service User
 
-# Troubleshooting
-Optional section for how to troubleshoot. Especially anything in the source application that an xMatters developer might not know about, or specific areas in xMatters to look for details - like the Activity Stream? 
+### Assign permissions to the Communication Plan, Form, and Endpoint  
+1. **Communication Plan**  
+    * From within the Developer tab, select the Edit drop-down menu for the Post Event Report communication plan
+    * From the Edit drop-down menu, select Access Permissions
+    * From within Access Permissions, add the xMatters REST User created above `rest.per`
+
+2. **Forms**  
+    * From within the Developer tab, select the Edit drop-down menu for the Post Event Report communication plan
+    * From the Edit drop-down menu, select Forms
+    * From within Forms, select the "Web Service" drop-down menu for the `Post Event Report` Form
+    * From within "Web Service" drop-down menu, select Sender Permissions
+    * From within Sender Permissions, add the xMatters REST User created above `rest.per`
+    * Again, from within Forms, select the "Web UI, Mobile" drop-down menu for the `Request Post Event Report` Form
+    * From within "Web UI, Mobile" drop-down menu, select Sender Permissions
+    * From within Sender Permissions, add the Roles that you would like to enable to request that the reports are generated.  You may want to consider `Company Supervisor`, `Developer`, and/or `Support User`.
+
+3. **Generate API Key for Inbound Integration**  
+    * There is an Inbound Integration that is used to start the Report Generation process called `PER Step 1: Initiate Post Event Reporter`.
+    * You need to generate the <b>API Key</b> and <b>Secret</b> for this Inbound Integration.
+    * This will be used to configure one of the Endpoints below.
+    * To configure the API Key, open the Inbound Integrations section of the Comm Plan (from the Integration Builder section) and select the `PER Step 1: Initiate Post Event Reporter`. 
+    <kbd> <img src="media/InboundIntegrations1.png"> </kbd>
+    * Next set the API Key based on the selected user.  Choose `rest.per` for the user.
+    <kbd> <img src="media/Step1-setting-getting-api-key.png"> </kbd>
+    * Copy the following three items as you will need them later:
+        1. API Key (Will be used to configure the `PEC Collector` endpoint.)
+        2. Secret (Will be used to configure the `PEC Collector` endpoint.)
+        3. Trigger  (Will be used to configure the `PEC_INBOUND_INTEGRATION_URL` constant.)
+
+4. **Collect the Inbound Integration Triggers for Steps 2 through 5**
+    * Staying in the Inbound Integration section, go into the remaining four Inbound Integrations, and capture the Trigger for each as they will be needed when configuring the Constants below.
+    1. `PER Step 2: Retrieve Targeted Recipients`
+    2. `PER Step 3: Retrieve Resolved Recipients`
+    3. `PER Step 4: Get Audit Logs`
+    4. `PER Step 5: Initiate Post Event Report`
+
+5. **Endpoints**  
+    * There are two Endpoints that need to be configured.
+    * One is used by the Request phase whereby it initiates the report by calling the Inbound Integration for Step 1; `PEC_COLLECTOR`.
+    * The second is used by the Report Generation logic, and is called `PER _REPORTER`.
+    * To get to this area, from the Edit drop-down menu, select Integration Builder
+    * From within the Integration Builder tab, select Edit Endpoints
+    * From within Edit Endpoints, select and configure `PEC_COLLECTOR` and `PER_REPORTER` in turn.
+    * The `PEC_COLLECTOR` must be configured to point to your xMatters Instance, with Basic Auth, and specify the <b>API Key</b> and <b>Secret</b> from Step 3.1 and 3.2 above as the User and Password.
+        <kbd><img src="media/endpoint-pec-collector.png"></kbd>
+    * The `PER_REPORTER` endpoint should be configured with Basic Auth and specify the `rest.per` user created previously.
+        <kbd><img src="media/endpoint-per-reporter.png"></kbd>
+
+5. **Constants**  
+    * There are serveral constants defined in the Communication Plan, but only two need to be modified to finish the configuration:
+        * `PEC_INBOUND_INTEGRATION_URL`
+        * `PER_STEP_URLS`
+
+    *  To get to this area, from the Edit drop-down menu, select Integration Builder
+    * From within the Integration Builder tab, select Edit Constants
+    * `PEC_INBOUND_INTEGRATION_URL` is the relative URL to the Inbound Integration that starts `PER Step 1: Initiate Post Event Reporter`.  Copy everything frome `/api` forward from above.
+        <kbd> <img src="media/pec-inbound-integration-url.png"> </kbd>
+
+    * `PER_STEP_URLS` contains a JSON array of relative URLs that map to Steps 2, 3, 4 and 5.
+        <kbd> <img src="media/per-step-urls.png"> </kbd>
+
+    * Some other interesting constants that you may need to adjust have to do with the formatting of date/time values.  In particular the timezone used for time/date calculations is specified in `PER_TIMEZONE` and the displayable version is in `PER_TIMEZONE_DISPLAY`.
+
+
+# Running
+If you have set the permissions correctly, you should be able to go to the Messaging tab and see on the left side the `POST EVENT REPORT` Communication Plan heading and the `Request Post Event Report` Form available to execute.
+<kbd><img src="media/final.png"></kbd>
+
+
+
+# Caveats
+There are a few items to consider that can determine whether or not the report will be able to be completed.  This report cannot handle massive amounts of data (e.g. 15000 users).  
+The Integration Builder has some limitations on processing time such that any step must complete within 60 seconds.  
+So, if you choose an Event that simpley never generates a report, it is probably because either the processing time was exceeded (not something we can detect or prevent), or you have too many properties (the report can handle a combined set of properites up to 100K).  
+If you try the report and it does not complete, try again but deselect the `Include Properties` and `Include Messages` options and see if that helps.
+
+Finally, if you get stuck, open up an Issue via this specific GitHub Repository and we will take a look. 
