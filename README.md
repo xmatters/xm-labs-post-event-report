@@ -104,9 +104,9 @@ Point to the `PostEventReport.zip` file and click Import Plan. This will create 
     * To get to this area, from the Edit drop-down menu, select Integration Builder
     * From within the Integration Builder tab, select Edit Endpoints
     * From within Edit Endpoints, select and configure `PEC_COLLECTOR` and `PER_REPORTER` in turn.
-    * The `PEC_COLLECTOR` must be configured to point to your xMatters Instance, with Basic Auth, and specify the <b>API Key</b> and <b>Secret</b> from Step 3.1 and 3.2 above as the User and Password.
+    * The `PEC_COLLECTOR` must be configured to point to your xMatters Instance, with Basic Auth, and specify the <b>API Key</b> and <b>Secret</b> from Step 3.1 and 3.2 above as the User and Password.  
         <kbd><img src="media/endpoint-pec-collector.png"></kbd>
-    * The `PER_REPORTER` endpoint should be configured with Basic Auth and specify the `rest.per` user created previously.
+    * The `PER_REPORTER` endpoint should be configured with Basic Auth and specify the `rest.per` user created previously.  
         <kbd><img src="media/endpoint-per-reporter.png"></kbd>
 
 5. **Constants**  
