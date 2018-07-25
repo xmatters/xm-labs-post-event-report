@@ -134,7 +134,9 @@ If you have set the permissions correctly, you should be able to go to the Messa
 # Caveats
 There are a few items to consider that can determine whether or not the report will be able to be completed.  This report cannot handle massive amounts of data (e.g. 15000 users).  
 The Integration Builder has some limitations on processing time such that any step must complete within 60 seconds.  
-So, if you choose an Event that simpley never generates a report, it is probably because either the processing time was exceeded (not something we can detect or prevent), or you have too many properties (the report can handle a combined set of properites up to 100K).  
+So, if you choose an Event that simply never generates a report, it is probably because either the processing time was exceeded (not something we can detect or prevent), or you have too many properties (the report can handle a combined set of properites up to 100K).  
 If you try the report and it does not complete, try again but deselect the `Include Properties` and `Include Messages` options and see if that helps.
+
+Also, the [Activity Stream](https://help.xmatters.com/ondemand/xmodwelcome/integrationbuilder/activity-stream.htm) can provide helpful information on what may or may not be happening during each of the Inbound Integrations too!
 
 Finally, if you get stuck, open up an Issue via this specific GitHub Repository and we will take a look. 
