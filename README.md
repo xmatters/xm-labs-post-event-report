@@ -49,10 +49,10 @@ Within the Commmunication Plan are two Shared Libraries that were created to enc
 
 ## xMatters set up
 ### Import the Workflow
-First, i\mport the `Post Event Report` Workflow into xMatters by downloading the [PostEventReport.zip](PostEventReport.zip) file and logging into xMatters. Navigate to the Workflow Page and click the `Import Plan` button. 
+First, i\mport the `Post Event Report` Workflow into xMatters by downloading the [PostEventReport.zip](PostEventReport.zip) file and logging into xMatters. Navigate to the Workflow Page and click the `Import` button. 
 
 <kbd>
-  <img src="media/ImportPlan.png" >
+  <img src="media/ImportWorkflow.png" >
 </kbd>
 
 Point to the `PostEventReport.zip` file and click Import Plan. This will create the `Post Event Report` Workflow.
