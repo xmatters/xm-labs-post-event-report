@@ -1,8 +1,10 @@
 # Post Event Report
-The "Post Event Report" is a Communication Plan that once configured can be used to generate and send out a post-mortem style report once an event completes.  Some of the features are the ability to include the Properties, the ability to render something close to the original message in HTML, as well as statistics about the event itself (timestamps, duration, targeted recipients, resolved recipients, responders, and comments).
+The "Post Event Report" is a Workflow that once configured can be used to generate and send out a post-mortem style report once an event completes.  Some of the features are the ability to include the Properties, the ability to render something close to the original message in HTML, as well as statistics about the event itself (timestamps, duration, targeted recipients, resolved recipients, responders, and comments).
 
 <kbd>
-  <img src="https://github.com/xmatters/xMatters-Labs/raw/master/media/disclaimer.png">
+<a href="https://support.xmatters.com/hc/en-us/community/topics">
+   <img src="https://github.com/xmatters/xMatters-Labs/raw/master/media/disclaimer.png">
+</a>
 </kbd>
 
 # Pre-Requisites
@@ -10,7 +12,7 @@ The "Post Event Report" is a Communication Plan that once configured can be used
 * An xMatters User with the `Rest Web Service User` Role
 
 # Files
-* [PostEventReport.zip](PostEventReport.zip) - This is the Communications Plan that contains a Form for requesting/initiating the Report, as well as the Inbound Integrations, Outbound Integrations, and Shared Libraries that do the actual work.
+* [PostEventReport.zip](PostEventReport.zip) - This is the Workflow that contains a Form for requesting/initiating the Report, as well as the Inbound Integrations, Outbound Integrations, and Shared Libraries that do the actual work.
 
 # How it works
 The report primarily takes advantage of two xMatters ReST APIs that do the majority of the work.  
@@ -41,19 +43,19 @@ The following three images are an example of the Post Event Report generated for
  <kbd> <img src="media/Report-3-of-3.png"> </kbd> 
 
 
-Within the Commmunication Plan are two Shared Libraries that were created to encapsulate the work done during each phase.  There is one Shared Library for requesting the report (`Post Event Client`), and another for creating the report (`Post Event Reporter`).  In theory you could install the `Post Event Client` library and it's pre-requisite endpoint and contants (documented in the `Post Event Client` Shared Library source) in any Communications Plan.
+Within the Commmunication Plan are two Shared Libraries that were created to encapsulate the work done during each phase.  There is one Shared Library for requesting the report (`Post Event Client`), and another for creating the report (`Post Event Reporter`).  In theory you could install the `Post Event Client` library and it's pre-requisite endpoint and contants (documented in the `Post Event Client` Shared Library source) in any Workflow.
 
 # Installation
 
 ## xMatters set up
-### Import the Communication Plan
-First, i\mport the `Post Event Report` Comm Plan into xMatters by downloading the [PostEventReport.zip](PostEventReport.zip) file and logging into xMatters. Navigate to the Developer tab and click the `Import Plan` button. 
+### Import the Workflow
+First, i\mport the `Post Event Report` Workflow into xMatters by downloading the [PostEventReport.zip](PostEventReport.zip) file and logging into xMatters. Navigate to the Workflow Page and click the `Import Plan` button. 
 
 <kbd>
   <img src="media/ImportPlan.png" >
 </kbd>
 
-Point to the `PostEventReport.zip` file and click Import Plan. This will create the `Post Event Report` Comm Plan.
+Point to the `PostEventReport.zip` file and click Import Plan. This will create the `Post Event Report` Workflow.
 
 ### Create a REST user account
 * **First Name:** Integration
@@ -61,14 +63,14 @@ Point to the `PostEventReport.zip` file and click Import Plan. This will create 
 * **User ID:** rest.per
 * **Roles:** REST Web Service User
 
-### Assign permissions to the Communication Plan, Form, and Endpoint  
-1. **Communication Plan**  
-    * From within the Developer tab, select the Edit drop-down menu for the Post Event Report communication plan
+### Assign permissions to the Workflow, Form, and Endpoint  
+1. **Workflow**  
+    * From within the Workflow Page, select the Edit drop-down menu for the Post Event Report workflow
     * From the Edit drop-down menu, select Access Permissions
     * From within Access Permissions, add the xMatters REST User created above `rest.per`
 
 2. **Forms**  
-    * From within the Developer tab, select the Edit drop-down menu for the Post Event Report communication plan
+    * From within the Workflow Page, select the Edit drop-down menu for the Post Event Report workflow
     * From the Edit drop-down menu, select Forms
     * From within Forms, select the "Web Service" drop-down menu for the `Post Event Report` Form
     * From within "Web Service" drop-down menu, select Sender Permissions
@@ -81,7 +83,7 @@ Point to the `PostEventReport.zip` file and click Import Plan. This will create 
     * There is an Inbound Integration that is used to start the Report Generation process called `PER Step 1: Initiate Post Event Reporter`.
     * You need to generate the <b>API Key</b> and <b>Secret</b> for this Inbound Integration.
     * This will be used to configure one of the Endpoints below.
-    * To configure the API Key, open the Inbound Integrations section of the Comm Plan (from the Integration Builder section) and select the `PER Step 1: Initiate Post Event Reporter`. 
+    * To configure the API Key, open the Inbound Integrations section of the Workflow (from the Integration Builder section) and select the `PER Step 1: Initiate Post Event Reporter`. 
     <kbd> <img src="media/InboundIntegrations1.png"> </kbd>
     * Next set the API Key based on the selected user.  Choose `rest.per` for the user.
     <kbd> <img src="media/Step1-setting-getting-api-key.png"> </kbd>
@@ -110,7 +112,7 @@ Point to the `PostEventReport.zip` file and click Import Plan. This will create 
         <kbd><img src="media/endpoint-per-reporter.png"></kbd>
 
 5. **Constants**  
-    * There are serveral constants defined in the Communication Plan, but only two need to be modified to finish the configuration:
+    * There are serveral constants defined in the Workflow, but only two need to be modified to finish the configuration:
         * `PEC_INBOUND_INTEGRATION_URL`
         * `PER_STEP_URLS`
 
@@ -126,7 +128,7 @@ Point to the `PostEventReport.zip` file and click Import Plan. This will create 
 
 
 # Running
-If you have set the permissions correctly, you should be able to go to the Messaging tab and see on the left side the `POST EVENT REPORT` Communication Plan heading and the `Request Post Event Report` Form available to execute.
+If you have set the permissions correctly, you should be able to go to the Messaging tab and see on the left side the `POST EVENT REPORT` Workflow heading and the `Request Post Event Report` Form available to execute.
 <kbd><img src="media/final.png"></kbd>
 
 
